@@ -114,10 +114,14 @@ This project provides a Django REST framework API for managing packages in a cou
   }
 
 ### Update Package
-- **URL**: `PUT /api/packages/{id}/`
+- **URL**: `PATCH /api/packages/{id}/`
 - **Description**: Update an existing package
 - **Authentication**: Required (JWT token)
-- **Request Body**: JSON with package details
+- **Request Body**:
+  ```json
+  {
+    "recipient_name": "Sojib"
+  }
 
 ### Delete Package (Soft Delete)
 - **URL**: `POST /api/packages/{id}/soft_delete/`
