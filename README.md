@@ -9,6 +9,7 @@ A Django-based RESTful API for managing packages in a courier service, allowing 
 - [Technologies Used](#technologies-used)
 - [Installation Guide](#installation-guide)
 - [API Endpoints](#api-endpoints)
+  - [Authentication](#authentication)
   - [Create Package](#create-package)
   - [List Packages](#list-packages)
   - [Get Package by Tracking Number](#get-package-by-tracking-number)
@@ -85,52 +86,157 @@ This project provides a Django REST framework API for managing packages in a cou
 
 ## API Endpoints
 
+### Authentication
+- **URL**: `POST /api/token/`
+- **Description**: Get JWT access token
+- **Curl Command**:
+  ```bash
+  curl -X POST http://127.0.0.1:8000/api/token/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"username\": \"admin\", \"password\": \"your_password\"}"
+  ```
+- **Response**:
+  ```json
+  {
+    "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+    "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+  }
+  ```
+
 ### Create Package
 - **URL**: `POST /api/packages/`
 - **Description**: Create a new package
 - **Authentication**: Required (JWT token)
-- **Request Body**:
+- **Curl Command**:
+  ```bash
+  curl -X POST http://127.0.0.1:8000/api/packages/ ^
+  -H "Authorization: Bearer your_jwt_token" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"recipient_name\": \"John Doe\", \"recipient_address\": \"123 Main St\", \"weight\": 2.5, \"description\": \"Fragile items\"}"
+  ```
+- **Response** (201 Created):
   ```json
   {
-      "recipient_name": "John Doe",
-      "recipient_address": "123 Main St",
-      "weight": 2.5
-  }
+    "id": 3,
+    "tracking_number": "65c26766-dc77-433c-9385-f24109a7df78",
+    "recipient_name": "John Doe",
+    "recipient_address": "123 Main St",
+    "weight": 2.5,
+    "description": "Fragile items",
+    "status": "pending",
+    "created_at": "2025-03-10T18:28:11.959890Z",
+    "updated_at": "2025-03-10T18:28:11.959920Z",
+    "deleted_at": null,
+    "sender": 1
+    }
   ```
 
 ### List Packages
 - **URL**: `GET /api/packages/`
-- **Description**: Get a list of all packages
+- **Description**: Get list of all packages
 - **Authentication**: Required (JWT token)
+- **Curl Command**:
+  ```bash
+  curl -X GET http://127.0.0.1:8000/api/packages/ ^
+  -H "Authorization: Bearer your_jwt_token"
+  ```
+- **Response** (200 OK):
+  ```json
+  [
+    {
+        "id": 1,
+        "tracking_number": "9130685a-394b-4197-9",
+        "recipient_name": "John Doe",
+        "recipient_address": "123 Main St",
+        "weight": 2.5,
+        "description": "No Description",
+        "status": "pending",
+        "created_at": "2025-03-10T16:50:35.845604Z",
+        "updated_at": "2025-03-10T17:05:58.347128Z",
+        "deleted_at": null,
+        "sender": 1
+    }
+  ]
+  ```
 
 ### Get Package by Tracking Number
-- **URL**: `POST /api/packages/get_package_by_tracking/`
-- **Description**: Get details of a package by providing its tracking number.
-- **Request Body**:
+- **URL**: `GET /api/packages/get_package_by_tracking/`
+- **Description**: Get package details by tracking number
+- **Authentication**: Required (JWT token)
+- **Curl Command**:
+  ```bash
+  curl -X GET http://127.0.0.1:8000//api/packages/get_package_by_tracking/ ^
+  -H "Content-Type: application/json" ^
+  -d "{\"tracking_number\": \"tracking number\"}"
+  ```
+- **Response** (200 OK):
   ```json
   {
-    "tracking_number": "9130685a-394b-4197-9"
+    "sender": 1,
+    "description": "No Description",
+    "recipient_name": "Sojib",
+    "status": "in_transit"
   }
+  ```
 
 ### Update Package
 - **URL**: `PATCH /api/packages/{id}/`
-- **Description**: Update an existing package
+- **Description**: Update package details
 - **Authentication**: Required (JWT token)
-- **Request Body**:
+- **Curl Command**:
+  ```bash
+  curl -X PATCH http://127.0.0.1:8000/api/packages/1/ ^
+  -H "Authorization: Bearer your_jwt_token" ^
+  -H "Content-Type: application/json" ^
+  -d "{\"status\": \"in_transit\", \"recipient_name\": \"John Smith\"}"
+  ```
+- **Response** (200 OK):
   ```json
   {
-    "recipient_name": "Sojib"
+    "id": 1,
+    "tracking_number": "",
+    "recipient_name": "Saimon Sojib",
+    "recipient_address": "123 Main St",
+    "weight": 2.5,
+    "description": "No Description",
+    "status": "pending",
+    "created_at": "2025-03-10T16:50:35.845604Z",
+    "updated_at": "2025-03-10T18:44:10.044573Z",
+    "deleted_at": null,
+    "sender": 1
   }
+  ```
 
 ### Delete Package (Soft Delete)
-- **URL**: `POST /api/packages/{id}/soft_delete/`
+- **URL**: `DELETE /api/packages/{id}//soft_delete/`
 - **Description**: Soft delete a package
 - **Authentication**: Required (JWT token)
-
+- **Curl Command**:
+  ```bash
+  curl -X DELETE http://127.0.0.1:8000//api/packages/{id}/soft_delete/ ^
+  -H "Authorization: Bearer your_jwt_token"
+  ```
+- **Response** (200 OK)
+ ```json
+ {
+    "message": "Package soft deleted"
+ }
+ ```
 ### Restore Package
 - **URL**: `POST /api/packages/{id}/restore/`
 - **Description**: Restore a soft-deleted package
 - **Authentication**: Required (JWT token)
+- **Curl Command**:
+  ```bash
+  curl -X POST http://127.0.0.1:8000//api/packages/{id}/restore/ ^
+  -H "Authorization: Bearer your_jwt_token"
+  ```
+- **Response** (200 OK):
+  ```json
+  {
+    "message": "Package restored"
+  }
+  ```
 
 ## Conclusion
 

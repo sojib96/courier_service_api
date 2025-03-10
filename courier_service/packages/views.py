@@ -14,7 +14,7 @@ class PackageViewSet(viewsets.ModelViewSet):
         tracking_number = str(uuid.uuid4())  # Generate a unique tracking number
         serializer.save(sender=self.request.user, tracking_number=tracking_number)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['delete'])
     def soft_delete(self, request, pk=None):
         package = self.get_object()
         package.soft_delete()
