@@ -15,8 +15,7 @@ A Django-based RESTful API for managing packages in a courier service, allowing 
   - [Update Package](#update-package)
   - [Delete Package (Soft Delete)](#delete-package-soft-delete)
   - [Restore Package](#restore-package)
-- [Contributing](#contributing)
-- [License](#license)
+- [Conclusion](#conclusion)
 
 ## Project Overview
 
